@@ -10,6 +10,7 @@ Repository TK KASDAD dengan topik **Valorant Pro Matches**
     - [`games.csv`](#gamescsv)
     - [`scores.csv`](#scorescsv)
     - [`agent_encode.csv`](#agent_encodecsv)
+    - [`agent_role.csv`](#agent_rolecsv)
   - [Problem Guideline](#problem-guideline)
 
 ## Informasi Umum
@@ -26,26 +27,28 @@ Berikut adalah panduan pengerjaan secara umum terkait proyek akhir.
     - Variabel yang menyimpan objek dengan class `Series` harus diberi penamaan dengan awalan `srs_`
     - Model *machine learning* yang dibuat masing-masing harus diikuti awalan yang mendeskripsikan model tersebut.
 
-        | Model  |  awalan  |
-        |---|---|
-        | Decision Tree Classifier  | `dtc_` |
-        | Decision Tree Regressor | `dtr_` |
-        | Random Forest Classifier | `rfc_` |
-        | Random Forest Regressor | `rfr_` |
-        | K-NN Classifier | `knnc_` |
-        | K-NN Regressor | `knnr_` |
-        | ... | ... |
+        | Model                    | awalan  |
+        | ------------------------ | ------- |
+        | Decision Tree Classifier | `dtc_`  |
+        | Decision Tree Regressor  | `dtr_`  |
+        | Random Forest Classifier | `rfc_`  |
+        | Random Forest Regressor  | `rfr_`  |
+        | K-NN Classifier          | `knnc_` |
+        | K-NN Regressor           | `knnr_` |
+        | ...                      | ...     |
 
         > Tambahakan konvensi penaaman variabel pada tabel di atas sesuai dengan kebutuhan.
     - Penamaan variabel untuk hal-hal lain, seperti `GridSearchCV` dan `SequentialFeatureSelector`,  dapat ditambahkan di sini. **Ingat untuk mengisi tabel di bawah setiap kali ada penambahan awalan baru.**
 
-        | Informasi |  awalan  |
-        |---|---|
-        | SequentialFeatureSelector | `sfs_` |
-        | ... | ... |
+        | Informasi                 | awalan  |
+        | ------------------------- | ------- |
+        | SequentialFeatureSelector | `sfs_`  |
+        | Custom Utility Class      | `util_` |
+        | ...                       | ...     |
 3. Perhatikan penggunaan dan penambahan header dan subheader pada `TK_Data+.ipynb` agar mudah untuk melakukan navigasi pada file tersebut.
 
     > :bulb: **Tips:** Pada VSCode, kalian dapat mengakses bagian `Outline` pada `Explorer` untuk melakukan navigasi pada file `TK_Data+.ipynb`.
+4. Implementasikan semua prosedur untuk melakukan data pre-processing pada `Utility Function` dengan membuat method pada utility class yang sesuai.
 
 ## Dataset
 
@@ -84,8 +87,8 @@ Jumlah Kolom x Baris: 18 kolom x 12961 baris
 
 Deskripsi Kolom:
 
-1. GameID : Id pertandingan
-2. MatchID : Id babak
+1. GameID : Id babak
+2. MatchID : Id pertandingan
 3. Map : Peta yang digunakan
 4. Team1ID : Id tim 1
 5. Team2ID : Id tim 2
@@ -144,6 +147,31 @@ Deskripsi Kolom:
 ### `agent_encode.csv`
 
 Label encoding dari nama agent di Valorant.
+
+Jumlah Kolom x Baris: 2 kolom x 17 baris
+
+Deskripsi Kolom:
+
+1. Agent: nama karakter
+2. Encode: hasil encoding
+
+### `agent_role.csv`
+
+Kategori dari agent-agent pada valorant
+
+Jumlah Kolom x Baris: 2 kolom x 17 baris
+
+Deskripsi Kolom:
+
+1. Agent: nama karakter
+2. Role: peran karakter
+
+Kategori Kolom Role:
+
+1. controllers: agen-agen dengan tipe ini dapat memblokir area tertentu di peta untuk mempermudah serangan atau pertahanan, serta mengontrol alur permainan.
+2. duelists: agen-agen dengan tipe ini bersifat ofensif dan unggul dalam pertarungan satu lawan satu dengan tujuan untuk menerobos pertahanan musuh dan memenangkan duel.
+3. initiators: agen-agen dengan tipe ini berfungsi sebagai pendukung dan sangat cocok untuk memulai pertarungan dan membantu tim Anda memenangkannya. Agen ini biasanya memiliki kemampuan yang memungkinkan mereka memberikan informasi kepada tim, atau mengacaukan musuh.
+4. sentinels: agen-agen dengan tipe ini bersifat defensif dan biasanya memperlambat, mengulur waktu, atau terkadang langsung menghentikan serangan musuh di area tertentu di peta.
 
 ## Problem Guideline
 
