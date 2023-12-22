@@ -84,6 +84,13 @@ class MatchesUtils(Transformer):
 
         return df['Date'].map(date_transform, na_action='ignore')
 
+    def date_transform_remove_day(self, df: pd.DataFrame):
+        def date_transform(x):
+            year, month, _ = x.split('-')
+            return f'{year}-{month}'
+
+        return df['Date'].map(date_transform, na_action='ignore')
+
 
 class GamesUtils(Transformer):
     '''
