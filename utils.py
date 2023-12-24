@@ -107,25 +107,25 @@ class GamesUtils(Transformer):
 
             if row[['Team1ID', 'Team1_Eco', 'Team1_SemiEco', 'Team1_SemiBuy', 'Team1_FullBuy']].isna().any():
                 team1_econ_info = df_team_econ_median.loc[int(row['Team1ID'])]
-                
+
                 if team1_econ_info.isna().any():
                     team1_econ_info = srs_econ_median
-                    
+
                 row['Team1_Eco'] = team1_econ_info['Team_Eco']
                 row['Team1_SemiEco'] = team1_econ_info['Team_SemiEco']
                 row['Team1_SemiBuy'] = team1_econ_info['Team_SemiBuy']
                 row['Team1_FullBuy'] = team1_econ_info['Team_FullBuy']
             if row[['Team2ID', 'Team2_Eco', 'Team2_SemiEco', 'Team2_SemiBuy', 'Team2_FullBuy']].isna().any():
                 team2_econ_info = df_team_econ_median.loc[int(row['Team2ID'])]
-                
+
                 if team2_econ_info.isna().any():
                     team2_econ_info = srs_econ_median
-                
+
                 row['Team2_Eco'] = team2_econ_info['Team_Eco']
                 row['Team2_SemiEco'] = team2_econ_info['Team_SemiEco']
                 row['Team2_SemiBuy'] = team2_econ_info['Team_SemiBuy']
                 row['Team2_FullBuy'] = team2_econ_info['Team_FullBuy']
-            
+
             return row
 
         return df_games[['Team1ID', 'Team1_Eco', 'Team1_SemiEco', 'Team1_SemiBuy', 'Team1_FullBuy', 'Team2ID', 'Team2_Eco', 'Team2_SemiEco', 'Team2_SemiBuy', 'Team2_FullBuy']].apply(econ_impute, axis='columns')
@@ -202,7 +202,7 @@ class ScoresUtils(Transformer):
 
             row_agent_obj = row['Agent']
 
-            # # Pengecekan Agent untuk menentukan nilai ACS
+            # Pengecekan Agent untuk menentukan nilai ACS
             agent_row = acs_median.loc[acs_median['Agent'] == row_agent_obj]
 
             if not agent_row.empty:
@@ -212,6 +212,41 @@ class ScoresUtils(Transformer):
 
         return df_scores[['Agent', 'ACS']].apply(
             acs_imputer, axis='columns')
+
+    def team_abbreviation_impute(self, df_scores: pd.DataFrame, df_game_team_agent: pd.DataFrame):
+        def team_abbreviation_impute(row):
+            if not row.isna().any():
+                return row
+
+            team_agent_info = df_game_team_agent.loc[int(row['GameID'])]
+            team_abbr = team_agent_info['TeamAbbreviation']
+            team_agent = team_agent_info['Agent']
+
+            try:
+                team1, team2 = set(team_abbr)
+                team1_count = team_abbr.count(team1)
+                team2_count = team_abbr.count(team2)
+
+                if team1_count == 5 and team2_count == 4:
+                    row['TeamAbbreviation'] = team2
+                elif team1_count == 4 and team2_count == 5:
+                    row['TeamAbbreviation'] = team1
+                elif row['Agent'] in team_agent:
+                    enemy_agent_index = team_agent.index(row['Agent'])
+                    enemy_team = team_agent[enemy_agent_index]
+                    row['TeamAbbreviation'] = team1 if enemy_team == team2 else team2
+                else:
+                    row['TeamAbbreviation'] = team1 if team1_count < team2_count else team2
+            except:
+                team = set(team_abbr).pop()
+                team_count = team_abbr.count(team)
+
+                if team_count < 5:
+                    row['TeamAbbreviation'] = team
+            finally:
+                return row
+
+        return df_scores[['GameID', 'TeamAbbreviation', 'Agent']].apply(team_abbreviation_impute, axis='columns')
 
 
 # Objek utility
