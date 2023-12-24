@@ -100,6 +100,36 @@ class GamesUtils(Transformer):
     def transform(self, data: pd.DataFrame):
         pass
 
+    def econ_impute(self, df_games: pd.DataFrame, df_team_econ_median: pd.DataFrame, srs_econ_median: pd.Series):
+        def econ_impute(row):
+            if not row.isna().any():
+                return row
+
+            if row[['Team1ID', 'Team1_Eco', 'Team1_SemiEco', 'Team1_SemiBuy', 'Team1_FullBuy']].isna().any():
+                team1_econ_info = df_team_econ_median.loc[int(row['Team1ID'])]
+                
+                if team1_econ_info.isna().any():
+                    team1_econ_info = srs_econ_median
+                    
+                row['Team1_Eco'] = team1_econ_info['Team_Eco']
+                row['Team1_SemiEco'] = team1_econ_info['Team_SemiEco']
+                row['Team1_SemiBuy'] = team1_econ_info['Team_SemiBuy']
+                row['Team1_FullBuy'] = team1_econ_info['Team_FullBuy']
+            if row[['Team2ID', 'Team2_Eco', 'Team2_SemiEco', 'Team2_SemiBuy', 'Team2_FullBuy']].isna().any():
+                team2_econ_info = df_team_econ_median.loc[int(row['Team2ID'])]
+                
+                if team2_econ_info.isna().any():
+                    team2_econ_info = srs_econ_median
+                
+                row['Team2_Eco'] = team2_econ_info['Team_Eco']
+                row['Team2_SemiEco'] = team2_econ_info['Team_SemiEco']
+                row['Team2_SemiBuy'] = team2_econ_info['Team_SemiBuy']
+                row['Team2_FullBuy'] = team2_econ_info['Team_FullBuy']
+            
+            return row
+
+        return df_games[['Team1ID', 'Team1_Eco', 'Team1_SemiEco', 'Team1_SemiBuy', 'Team1_FullBuy', 'Team2ID', 'Team2_Eco', 'Team2_SemiEco', 'Team2_SemiBuy', 'Team2_FullBuy']].apply(econ_impute, axis='columns')
+
 
 class ScoresUtils(Transformer):
     '''
