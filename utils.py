@@ -6,19 +6,46 @@ import numpy as np
 import pandas as pd
 
 
-def merge_datasets(df_matches, df_games, df_scores):
-    df_matches_games = pd.merge(df_matches, df_games, on=[
-                                'MatchID', 'Team1ID', 'Team2ID'])
-    df_matches_games_scores = pd.merge(
-        df_matches_games, df_scores, on=['GameID'])
-    return df_matches_games_scores
-
-
 class Transformer:
     def transform(self, data: pd.DataFrame):
         '''
         Implementasi berupa prosedur (Facade pattern) untuk men-transform test dataset `*_test.csv` ke dalam
         bentuk yang dapat diproses secara langsung oleh model machine learning yang telah dibuat.
+        '''
+        pass
+
+
+class DatasetUtils:
+    '''
+    Utility class untuk dataset hasil merger dari `matches.csv`, `games.csv`, dan `scores.csv` 
+    '''
+
+    def __init__(self):
+        self.classification_features = {}
+        self.regression_features = {}
+
+    def remove_redundant_attr(self):
+        pass
+
+    def remove_meta_attr(self):
+        pass
+
+    def merge_datasets(self, df_matches, df_games, df_scores):
+        df_matches_games = pd.merge(df_matches, df_games, on=[
+                                    'MatchID', 'Team1ID', 'Team2ID'])
+        df_matches_games_scores = pd.merge(
+            df_matches_games, df_scores, on=['GameID'])
+        return df_matches_games_scores
+
+    def classification_select(self, key):
+        '''
+        Method untuk memilih fitur yang akan digunakan dalam permasalahan klasifikasi
+        '''
+        pass
+
+    def regression_select(self, key):
+        '''
+        Method untuk memilih fitur yang akan digunakan dalam permasalahan regressi
         '''
         pass
 
@@ -248,8 +275,14 @@ class ScoresUtils(Transformer):
 
         return df_scores[['GameID', 'TeamAbbreviation', 'Agent']].apply(team_abbreviation_impute, axis='columns')
 
+    def merge_player_id_and_name(self, df_scores):
+        def merge_player_id_and_name(row):
+            return f'{row['PlayerName']}#{int(row['PlayerID'])}'
+        return df_scores[['PlayerID', 'PlayerName']].apply(merge_player_id_and_name, axis='columns')
+
 
 # Objek utility
 util_matches = MatchesUtils()
 util_games = GamesUtils()
 util_scores = ScoresUtils()
+util_dataset = DatasetUtils()
