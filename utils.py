@@ -28,6 +28,7 @@ class DatasetUtils:
         pass
 
     def remove_meta_attr(self):
+        meta_attr = ['No_x', 'MatchID', 'EventID', 'EventName', 'EventStage']
         pass
 
     def merge_datasets(self, df_matches, df_games, df_scores):
@@ -117,6 +118,13 @@ class MatchesUtils(Transformer):
             return f'{year}-{month}'
 
         return df['Date'].map(date_transform, na_action='ignore')
+    
+    def event_stage_transform(self, df_matches: pd.DataFrame):
+        def event_stage_transform(x):
+            stage_general, *_ = x.split()
+            return stage_general.strip(':')
+
+        return df_matches['EventStage'].map(event_stage_transform)
 
 
 class GamesUtils(Transformer):
