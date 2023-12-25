@@ -15,7 +15,7 @@ class Transformer:
         pass
 
 
-class DatasetUtils:
+class DatasetUtils(Transformer):
     '''
     Utility class untuk dataset hasil merger dari `matches.csv`, `games.csv`, dan `scores.csv` 
     '''
@@ -27,9 +27,22 @@ class DatasetUtils:
     def remove_redundant_attr(self):
         pass
 
-    def remove_meta_attr(self):
-        meta_attr = ['No_x', 'MatchID', 'EventID', 'EventName', 'EventStage']
-        pass
+    def remove_meta_attr_classification(self, df: pd.DataFrame):
+        meta_attr = [
+            'No_x', 'MatchID', 'EventID', 'EventName',
+            'Team1ID', 'Team2ID', 'Team1_x', 'Team2_x',
+            'Team1_MapScore', 'Team2_MapScore', 'No_y',
+            'GameID', 'Team1_y', 'Team2_y', 'Winner', 'Team1_Eco',
+            'Team1_SemiEco', 'Team1_SemiBuy', 'Team1_FullBuy',
+            'Team1_TotalRounds', 'Team2_Eco', 'Team2_SemiEco',
+            'Team2_SemiBuy', 'Team2_FullBuy', 'Team2_TotalRounds',
+            'No', 'KAST_Percent', 'PlayerName', 'PlayerID', 'TeamAbbreviation', 'EventStage'
+        ]
+
+        if 'ACS' in df.columns:
+            meta_attr.append('ACS')
+
+        return df.drop(meta_attr, axis='columns')
 
     def merge_datasets(self, df_matches, df_games, df_scores):
         df_matches_games = pd.merge(df_matches, df_games, on=[
@@ -56,8 +69,15 @@ class MatchesUtils(Transformer):
     Utility class untuk dataset `matches.csv`
     '''
 
-    def transform(self, data: pd.DataFrame):
-        pass
+    def transform(self, data: pd.DataFrame, df_patch_date_range: pd.DataFrame):
+        df = data.copy()
+        df['Date'] = self.date_transform(df)
+        df['Patch'] = self.patch_impute(df, df_patch_date_range)
+        df['Patch'] = self.patch_transform(df)
+        df['Date'] = self.date_transform_remove_day(df)
+        df['Date'] = self.date_diff_transform(df)
+        df['EventStage'] = self.event_stage_transform(df)
+        return df
 
     def patch_transform(self, df: pd.DataFrame):
         def patch_transform(x):
@@ -118,13 +138,25 @@ class MatchesUtils(Transformer):
             return f'{year}-{month}'
 
         return df['Date'].map(date_transform, na_action='ignore')
-    
+
     def event_stage_transform(self, df_matches: pd.DataFrame):
         def event_stage_transform(x):
             stage_general, *_ = x.split()
             return stage_general.strip(':')
 
         return df_matches['EventStage'].map(event_stage_transform)
+
+    def date_diff_transform(self, df: pd.DataFrame):
+        date_valorant_published = '2020-06-02'
+        date_subtrahend = datetime.strptime(
+            date_valorant_published, '%Y-%m-%d')
+
+        def date_diff_transform(x):
+            date_minuend = datetime.strptime(x, '%Y-%m')
+            time_difference = (date_minuend - date_subtrahend).days
+            return time_difference
+
+        return df['Date'].apply(date_diff_transform)
 
 
 class GamesUtils(Transformer):
@@ -133,7 +165,8 @@ class GamesUtils(Transformer):
     '''
 
     def transform(self, data: pd.DataFrame):
-        pass
+        df = data.copy()
+        return df
 
     def econ_impute(self, df_games: pd.DataFrame, df_team_econ_median: pd.DataFrame, srs_econ_median: pd.Series):
         def econ_impute(row):
@@ -172,7 +205,8 @@ class ScoresUtils(Transformer):
     '''
 
     def transform(self, data: pd.DataFrame):
-        pass
+        df = data.copy()
+        return df
 
     def cek_null(self, df: pd.DataFrame):
         col_na = df.isnull().sum().sort_values(ascending=False)
@@ -282,11 +316,6 @@ class ScoresUtils(Transformer):
                 return row
 
         return df_scores[['GameID', 'TeamAbbreviation', 'Agent']].apply(team_abbreviation_impute, axis='columns')
-
-    def merge_player_id_and_name(self, df_scores):
-        def merge_player_id_and_name(row):
-            return f'{row['PlayerName']}#{int(row['PlayerID'])}'
-        return df_scores[['PlayerID', 'PlayerName']].apply(merge_player_id_and_name, axis='columns')
 
 
 # Objek utility
