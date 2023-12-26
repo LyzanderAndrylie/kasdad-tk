@@ -77,6 +77,7 @@ class MatchesUtils(Transformer):
         df['Date'] = self.date_transform_remove_day(df)
         df['Date'] = self.date_diff_transform(df)
         df['EventStage'] = self.event_stage_transform(df)
+        df['Team_MapScore'] = self.create_team_mapscore_avg(df)
         return df
 
     def patch_transform(self, df: pd.DataFrame):
@@ -158,6 +159,12 @@ class MatchesUtils(Transformer):
 
         return df['Date'].apply(date_diff_transform)
 
+    def create_team_mapscore_avg(self, df_matches: pd.DataFrame):
+        def create_team_mapscore(row):
+            return (row['Team1_MapScore'] + row['Team2_MapScore'])/2
+
+        return df_matches[['Team1_MapScore', 'Team2_MapScore']].apply(create_team_mapscore, axis='columns')
+
 
 class GamesUtils(Transformer):
     '''
@@ -166,6 +173,11 @@ class GamesUtils(Transformer):
 
     def transform(self, data: pd.DataFrame):
         df = data.copy()
+        df['Team_Eco'] = self.create_team_eco_avg(df)
+        df['Team_SemiEco'] = self.create_team_semieco_avg(df)
+        df['Team_SemiBuy'] = self.create_team_semibuy_avg(df)
+        df['Team_FullBuy'] = self.create_team_fullbuy_avg(df)
+        df['Team_TotalRounds'] = self.create_team_total_round_avg(df)
         return df
 
     def econ_impute(self, df_games: pd.DataFrame, df_team_econ_median: pd.DataFrame, srs_econ_median: pd.Series):
@@ -197,6 +209,36 @@ class GamesUtils(Transformer):
             return row
 
         return df_games[['Team1ID', 'Team1_Eco', 'Team1_SemiEco', 'Team1_SemiBuy', 'Team1_FullBuy', 'Team2ID', 'Team2_Eco', 'Team2_SemiEco', 'Team2_SemiBuy', 'Team2_FullBuy']].apply(econ_impute, axis='columns')
+
+    def create_team_eco_avg(self, df_games: pd.DataFrame):
+        def create_team_eco_avg(row):
+            return (row['Team1_Eco'] + row['Team2_Eco'])/2
+
+        return df_games[['Team1_Eco', 'Team2_Eco']].apply(create_team_eco_avg, axis='columns')
+
+    def create_team_semieco_avg(self, df_games: pd.DataFrame):
+        def create_team_semieco_avg(row):
+            return (row['Team1_SemiEco'] + row['Team2_SemiEco'])/2
+
+        return df_games[['Team1_SemiEco', 'Team2_SemiEco']].apply(create_team_semieco_avg, axis='columns')
+
+    def create_team_semibuy_avg(self, df_games: pd.DataFrame):
+        def create_team_semibuy_avg(row):
+            return (row['Team1_SemiBuy'] + row['Team2_SemiBuy'])/2
+
+        return df_games[['Team1_SemiBuy', 'Team2_SemiBuy']].apply(create_team_semibuy_avg, axis='columns')
+
+    def create_team_fullbuy_avg(self, df_games: pd.DataFrame):
+        def create_team_fullbuy_avg(row):
+            return (row['Team1_FullBuy'] + row['Team2_FullBuy'])/2
+
+        return df_games[['Team1_FullBuy', 'Team2_FullBuy']].apply(create_team_fullbuy_avg, axis='columns')
+    
+    def create_team_total_round_avg(self, df_games: pd.DataFrame):
+        def create_team_fullbuy_avg(row):
+            return (row['Team1_TotalRounds'] + row['Team2_TotalRounds'])/2
+
+        return df_games[['Team1_TotalRounds', 'Team2_TotalRounds']].apply(create_team_fullbuy_avg, axis='columns')
 
 
 class ScoresUtils(Transformer):
