@@ -23,9 +23,21 @@ class DatasetUtils(Transformer):
     def __init__(self):
         self.classification_features = {}
         self.regression_features = {}
+    
+    def transform(self, df_matches, df_games, df_scores, df_patch_agent=None):
+        df = self.merge_datasets(df_matches, df_games, df_scores)
+        
+        if df_patch_agent is not None:
+            df['Total_Agent'] = self.create_total_agent(df, df_patch_agent)
+        
+        return df
 
-    def remove_redundant_attr(self):
-        pass
+    def merge_datasets(self, df_matches, df_games, df_scores):
+        df_matches_games = pd.merge(df_matches, df_games, on=[
+                                    'MatchID', 'Team1ID', 'Team2ID'])
+        df_matches_games_scores = pd.merge(
+            df_matches_games, df_scores, on=['GameID'])
+        return df_matches_games_scores
 
     def remove_meta_attr_classification(self, df: pd.DataFrame):
         meta_attr = [
@@ -45,12 +57,6 @@ class DatasetUtils(Transformer):
 
         return df.drop(meta_attr, axis='columns')
 
-    def merge_datasets(self, df_matches, df_games, df_scores):
-        df_matches_games = pd.merge(df_matches, df_games, on=[
-                                    'MatchID', 'Team1ID', 'Team2ID'])
-        df_matches_games_scores = pd.merge(
-            df_matches_games, df_scores, on=['GameID'])
-        return df_matches_games_scores
 
     def classification_select(self, key):
         '''
@@ -63,6 +69,12 @@ class DatasetUtils(Transformer):
         Method untuk memilih fitur yang akan digunakan dalam permasalahan regressi
         '''
         pass
+    
+    def create_total_agent(self, df: pd.DataFrame, df_patch_agent: pd.DataFrame):
+        def create_total_agent(x):
+            return df_patch_agent.loc[x][0]
+        
+        return df['Patch'].map(create_total_agent)
 
 
 class MatchesUtils(Transformer):
