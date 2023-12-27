@@ -36,7 +36,8 @@ class DatasetUtils(Transformer):
             'Team1_SemiEco', 'Team1_SemiBuy', 'Team1_FullBuy',
             'Team1_TotalRounds', 'Team2_Eco', 'Team2_SemiEco',
             'Team2_SemiBuy', 'Team2_FullBuy', 'Team2_TotalRounds',
-            'No', 'KAST_Percent', 'PlayerName', 'PlayerID', 'TeamAbbreviation', 'EventStage'
+            'No', 'KAST_Percent', 'PlayerName', 'PlayerID', 'TeamAbbreviation', 'EventStage',
+            'Num_2Ks', 'Num_3Ks', 'Num_4Ks', 'Num_5Ks', 'OnevOne', 'OnevTwo', 'OnevThree', 'OnevFour', 'OnevFive'
         ]
 
         if 'ACS' in df.columns:
@@ -233,7 +234,7 @@ class GamesUtils(Transformer):
             return (row['Team1_FullBuy'] + row['Team2_FullBuy'])/2
 
         return df_games[['Team1_FullBuy', 'Team2_FullBuy']].apply(create_team_fullbuy_avg, axis='columns')
-    
+
     def create_team_total_round_avg(self, df_games: pd.DataFrame):
         def create_team_fullbuy_avg(row):
             return (row['Team1_TotalRounds'] + row['Team2_TotalRounds'])/2
@@ -248,6 +249,8 @@ class ScoresUtils(Transformer):
 
     def transform(self, data: pd.DataFrame):
         df = data.copy()
+        df['Num_Ks'] = self.create_numks(df)
+        df['OnevX'] = self.create_onevx(df)
         return df
 
     def cek_null(self, df: pd.DataFrame):
@@ -358,6 +361,16 @@ class ScoresUtils(Transformer):
                 return row
 
         return df_scores[['GameID', 'TeamAbbreviation', 'Agent']].apply(team_abbreviation_impute, axis='columns')
+
+    def create_numks(self, df_scores: pd.DataFrame):
+        def create_numks(row):
+            return (2*row['Num_2Ks'] + 3*row['Num_3Ks'] + 4*row['Num_4Ks'] + 5*row['Num_5Ks'])/14
+        return df_scores[['Num_2Ks', 'Num_3Ks', 'Num_4Ks', 'Num_5Ks']].apply(create_numks, axis='columns')
+
+    def create_onevx(self, df_scores: pd.DataFrame):
+        def create_onevx(row):
+            return (1*row['OnevOne']+2*row['OnevTwo'] + 3*row['OnevThree'] + 4*row['OnevFour'] + 5*row['OnevFive'])/15
+        return df_scores[['OnevOne', 'OnevTwo', 'OnevThree', 'OnevFour', 'OnevFive']].apply(create_onevx, axis='columns')
 
 
 # Objek utility
