@@ -37,7 +37,7 @@ class DatasetUtils(Transformer):
             'Team1_TotalRounds', 'Team2_Eco', 'Team2_SemiEco',
             'Team2_SemiBuy', 'Team2_FullBuy', 'Team2_TotalRounds',
             'No', 'KAST_Percent', 'PlayerName', 'PlayerID', 'TeamAbbreviation', 'EventStage',
-            'Num_2Ks', 'Num_3Ks', 'Num_4Ks', 'Num_5Ks', 'OnevOne', 'OnevTwo', 'OnevThree', 'OnevFour', 'OnevFive'
+            'Num_2Ks', 'Num_3Ks', 'Num_4Ks', 'Num_5Ks', 'OnevOne', 'OnevTwo', 'OnevThree', 'OnevFour', 'OnevFive',
         ]
 
         if 'ACS' in df.columns:
