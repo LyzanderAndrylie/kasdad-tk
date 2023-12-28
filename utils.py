@@ -56,6 +56,25 @@ class DatasetUtils(Transformer):
             meta_attr.append('ACS')
 
         return df.drop(meta_attr, axis='columns')
+    
+    def remove_meta_attr_regression(self, df: pd.DataFrame):
+        meta_attr = [
+            'No_x', 'MatchID', 'EventID', 'EventName', 'Date', 'Patch', 'Map', 'Team_MapScore',
+            'Team1ID', 'Team2ID', 'Team1_x', 'Team2_x',
+            'Team1_MapScore', 'Team2_MapScore', 'No_y',
+            'GameID', 'Team1_y', 'Team2_y', 'Winner', 'Team1_Eco',
+            'Team1_SemiEco', 'Team1_SemiBuy', 'Team1_FullBuy',
+            'Team1_TotalRounds', 'Team2_Eco', 'Team2_SemiEco',
+            'Team2_SemiBuy', 'Team2_FullBuy', 'Team2_TotalRounds',
+            'No', 'KAST_Percent', 'PlayerName', 'PlayerID', 'TeamAbbreviation', 'EventStage',
+            'Num_2Ks', 'Num_3Ks', 'Num_4Ks', 'Num_5Ks', 'OnevOne', 'OnevTwo', 'OnevThree', 'OnevFour', 'OnevFive',
+            'Kills', 'Deaths', 'Assists', 'PlusMinus', 'ADR'
+        ]
+
+        if 'Agent' in df.columns:
+            meta_attr.append('Agent')
+
+        return df.drop(meta_attr, axis='columns')
 
 
     def classification_select(self, key):
