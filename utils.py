@@ -20,16 +20,12 @@ class DatasetUtils(Transformer):
     Utility class untuk dataset hasil merger dari `matches.csv`, `games.csv`, dan `scores.csv` 
     '''
 
-    def __init__(self):
-        self.classification_features = {}
-        self.regression_features = {}
-    
     def transform(self, df_matches, df_games, df_scores, df_patch_agent=None):
         df = self.merge_datasets(df_matches, df_games, df_scores)
-        
+
         if df_patch_agent is not None:
             df['Total_Agent'] = self.create_total_agent(df, df_patch_agent)
-        
+
         return df
 
     def merge_datasets(self, df_matches, df_games, df_scores):
@@ -56,7 +52,7 @@ class DatasetUtils(Transformer):
             meta_attr.append('ACS')
 
         return df.drop(meta_attr, axis='columns')
-    
+
     def remove_meta_attr_regression(self, df: pd.DataFrame):
         meta_attr = [
             'No_x', 'MatchID', 'EventID', 'EventName', 'Date', 'Patch', 'Map', 'Team_MapScore', 'Total_Agent',
@@ -76,7 +72,6 @@ class DatasetUtils(Transformer):
 
         return df.drop(meta_attr, axis='columns')
 
-
     def classification_select(self, key):
         '''
         Method untuk memilih fitur yang akan digunakan dalam permasalahan klasifikasi
@@ -88,11 +83,11 @@ class DatasetUtils(Transformer):
         Method untuk memilih fitur yang akan digunakan dalam permasalahan regressi
         '''
         pass
-    
+
     def create_total_agent(self, df: pd.DataFrame, df_patch_agent: pd.DataFrame):
         def create_total_agent(x):
             return df_patch_agent.loc[x][0]
-        
+
         return df['Patch'].map(create_total_agent)
 
 
@@ -108,7 +103,6 @@ class MatchesUtils(Transformer):
         df['Patch'] = self.patch_transform(df)
         df['Date'] = self.date_transform_remove_day(df)
         df['Date'] = self.date_diff_transform(df)
-        df['EventStage'] = self.event_stage_transform(df)
         df['Team_MapScore'] = self.create_team_mapscore_avg(df)
         return df
 
@@ -171,13 +165,6 @@ class MatchesUtils(Transformer):
             return f'{year}-{month}'
 
         return df['Date'].map(date_transform, na_action='ignore')
-
-    def event_stage_transform(self, df_matches: pd.DataFrame):
-        def event_stage_transform(x):
-            stage_general, *_ = x.split()
-            return stage_general.strip(':')
-
-        return df_matches['EventStage'].map(event_stage_transform)
 
     def date_diff_transform(self, df: pd.DataFrame):
         date_valorant_published = '2020-06-02'
