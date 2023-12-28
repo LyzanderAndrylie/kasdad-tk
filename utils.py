@@ -55,7 +55,7 @@ class DatasetUtils(Transformer):
 
     def remove_meta_attr_regression(self, df: pd.DataFrame):
         meta_attr = [
-            'No_x', 'MatchID', 'EventID', 'EventName', 'Date', 'Patch', 'Map', 'Team_MapScore',
+            'No_x', 'MatchID', 'EventID', 'EventName', 'Date', 'Patch', 'Map', 'Team_MapScore', 'Total_Agent',
             'Team1ID', 'Team2ID', 'Team1_x', 'Team2_x',
             'Team1_MapScore', 'Team2_MapScore', 'No_y',
             'GameID', 'Team1_y', 'Team2_y', 'Winner', 'Team1_Eco',
