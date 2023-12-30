@@ -177,14 +177,14 @@ Kategori Kolom Role:
 
 1. Lakukan eksplorasi sederhana pada data dan ceritakan insight yang Anda dapatkan dari data tersebut! (dapat ditambah analisis lain yang menurut kelompok Anda akan bermanfaat)
 
-   - [ ] Bagaimana distribusi Agent yang digunakan oleh pemain untuk setiap Patch 1.X, 2.X, dan 3.X? Apakah terdapat Agent yang mengalami penurunan pengguna pada patch yang berbeda?
-   - [ ] Bagaimana persebaran nilai ACS dari setiap Agent yang digunakan? Apakah pemilihan map yang berbeda menghasilkan persebaran nilai ACS yang berbeda juga?
-   - [ ] Siapa tim yang paling banyak memenangkan pertandingan grand final dari sebuah Event?
-   - [ ] Komposisi tim seperti apakah yang paling banyak memenangkan pertandingan?
-   - [ ] Mahasiswa perlu menambahkan dua poin eksplorasi sendiri
+   - [x] Bagaimana distribusi Agent yang digunakan oleh pemain untuk setiap Patch 1.X, 2.X, dan 3.X? Apakah terdapat Agent yang mengalami penurunan pengguna pada patch yang berbeda?
+   - [x] Bagaimana persebaran nilai ACS dari setiap Agent yang digunakan? Apakah pemilihan map yang berbeda menghasilkan persebaran nilai ACS yang berbeda juga?
+   - [x] Siapa tim yang paling banyak memenangkan pertandingan grand final dari sebuah Event?
+   - [x] Komposisi tim seperti apakah yang paling banyak memenangkan pertandingan?
+   - [x] Mahasiswa perlu menambahkan dua poin eksplorasi sendiri
 
 2. Buatlah beberapa model yang mungkin akan diperlukan, di antaranya: (dapat ditambah analisis lain yang menurut kelompok Anda akan bermanfaat)
 
-    - [ ] Lakukan klasifikasi untuk menentukan Agent yang digunakan oleh setiap pemain pada setiap babak!
-    - [ ] Buatlah model untuk memprediksi nilai rata-rata ACS dari masing-masing tim untuk sebuah pertandingan!
-    - [ ] Lakukan clustering pada dataset, dan berikan analisis dan insight yang kaliat dapatkan dari cluster yang dibuat.
+    - [x] Lakukan klasifikasi untuk menentukan Agent yang digunakan oleh setiap pemain pada setiap babak!
+    - [x] Buatlah model untuk memprediksi nilai rata-rata ACS dari masing-masing tim untuk sebuah pertandingan!
+    - [x] Lakukan clustering pada dataset, dan berikan analisis dan insight yang kaliat dapatkan dari cluster yang dibuat.
